@@ -7,21 +7,22 @@ import (
 )
 
 type GamemodeCommandSpec struct {
-	Gamemode gamemodeSpec `name:"gameMode"`
-	Target   []cmd.Target `name:"player" optional:""`
+	Gamemode gamemodeSpec               `cmd:"gameMode"`
+	Target   cmd.Optional[[]cmd.Target] `cmd:"player"`
 }
 
 type GamemodeCommandInt struct {
-	Gamemode int          `name:"gameMode"`
-	Target   []cmd.Target `name:"player" optional:""`
+	Gamemode int                        `cmd:"gameMode"`
+	Target   cmd.Optional[[]cmd.Target] `cmd:"player"`
 }
 
 func (cmd GamemodeCommandSpec) Run(source cmd.Source, output *cmd.Output) {
 	var target *player.Player
-	if len(cmd.Target) < 1 {
+	var selector, _ = cmd.Target.Load()
+	if len(selector) < 1 {
 		target = source.(*player.Player)
 	} else {
-		t, ok := cmd.Target[0].(*player.Player)
+		t, ok := selector[0].(*player.Player)
 		if !ok {
 			output.Error("Selector must be player-type")
 		}
