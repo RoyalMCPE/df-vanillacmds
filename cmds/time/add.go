@@ -5,7 +5,7 @@ import "github.com/df-mc/dragonfly/server/cmd"
 type TimeAdd struct {
 	Sub add_name
 
-	Amount int `name:"amount"`
+	Amount int `cmd:"amount"`
 }
 
 func (cmd TimeAdd) Run(source cmd.Source, output *cmd.Output) {
