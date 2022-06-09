@@ -12,5 +12,4 @@ func RegisterVanillaCommands(server *server.Server) {
 	srv = server
 	cmd.Register(cmd.New("time", "Changes or queries the world's game time.", []string{}, time.TimeSetString{}, time.TimeSetInt{}, time.TimeAdd{}))
 	cmd.Register(cmd.New("weather", "Sets the weather.", []string{}, WeatherCommand{}))
-	cmd.Register(cmd.New("gamemode", "Sets a player's game mode.", []string{}, GamemodeCommandSpec{}, GamemodeCommandInt{}))
 }

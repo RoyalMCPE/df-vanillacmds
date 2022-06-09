@@ -1,20 +1,20 @@
 package cmds
 
 import (
+	"github.com/df-mc/dragonfly/server/cmd"
 	"math/rand"
 	"time"
-
-	"github.com/df-mc/dragonfly/server/cmd"
 )
 
 type WeatherCommand struct {
-	State    weather `name:"state"`
-	Duration int     `optional:""`
+	State    weather `cmd:"state"`
+	Duration cmd.Optional[int]
 }
 
 func (cmd WeatherCommand) Run(source cmd.Source, output *cmd.Output) {
-	var duration time.Duration = time.Duration(cmd.Duration) * time.Second
-	if cmd.Duration == 0 {
+	var dur = cmd.Duration.LoadOr(0)
+	var duration time.Duration = time.Duration(dur) * time.Second
+	if dur == 0 {
 		duration = time.Duration(rand.Intn(900-300)+300) * time.Second
 	}
 	if cmd.State == "thunder" {

@@ -7,13 +7,13 @@ import (
 type TimeSetInt struct {
 	Sub set_name
 
-	Time int `name:"amount"`
+	Time int `cmd:"amount"`
 }
 
 type TimeSetString struct {
 	Sub set_name
 
-	Time time_spec `name:"time"`
+	Time time_spec `cmd:"time"`
 }
 
 func (cmd TimeSetString) Run(source cmd.Source, output *cmd.Output) {
