@@ -48,7 +48,7 @@ func (gamemodeSpec) Options(source cmd.Source) []string {
 		"c", "creative",
 		"d", "default",
 		"s", "survival",
-		// TODO: Add spectator
+		"spectator",
 	}
 }
 
@@ -61,6 +61,8 @@ func stringToGamemode(input string) world.GameMode {
 		gamemode = world.GameModeCreative
 	case "s", "survival":
 		gamemode = world.GameModeSurvival
+	case "spectator":
+		gamemode = world.GameModeSpectator
 	default:
 		gamemode = world.GameModeCreative
 	}
