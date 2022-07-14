@@ -30,8 +30,11 @@ func (cmd GamemodeCommandSpec) Run(source cmd.Source, output *cmd.Output) {
 	}
 	if cmd.Gamemode == "d" || cmd.Gamemode == "default" {
 		target.SetGameMode(target.World().DefaultGameMode())
+		target.Messagef("Your game mode has been updated to %v")
 	} else {
-		target.SetGameMode(stringToGamemode(string(cmd.Gamemode)))
+		var gamemode, name = stringToGamemode(string(cmd.Gamemode))
+		target.SetGameMode(gamemode)
+		target.Messagef("Your game mode has been updated to %v", name)
 	}
 }
 
@@ -53,19 +56,19 @@ func (gamemodeSpec) Options(source cmd.Source) []string {
 	}
 }
 
-func stringToGamemode(input string) world.GameMode {
-	var gamemode world.GameMode
+func stringToGamemode(input string) (world.GameMode, string) {
+	///var gamemode world.GameMode
 	switch input {
 	case "a", "adventure":
-		gamemode = world.GameModeAdventure
+		return world.GameModeAdventure, "Adventure"
 	case "c", "creative":
-		gamemode = world.GameModeCreative
+		return world.GameModeCreative, "Creative"
 	case "s", "survival":
-		gamemode = world.GameModeSurvival
+		return world.GameModeSurvival, "Survival"
 	case "spectator":
-		gamemode = world.GameModeSpectator
+		return world.GameModeSpectator, "Spectator"
 	default:
-		gamemode = world.GameModeCreative
+		return world.GameModeCreative, "Creative"
 	}
-	return gamemode
+	//return gamemode
 }
