@@ -16,29 +16,63 @@ type GamemodeCommandInt struct {
 	Target   cmd.Optional[[]cmd.Target] `cmd:"player"`
 }
 
-func (cmd GamemodeCommandSpec) Run(source cmd.Source, output *cmd.Output) {
-	var target *player.Player
-	var selector, _ = cmd.Target.Load()
-	if len(selector) < 1 {
-		target = source.(*player.Player)
-	} else {
-		t, ok := selector[0].(*player.Player)
-		if !ok {
-			output.Error("Selector must be player-type")
-		}
-		target = t
+func (c GamemodeCommandSpec) Run(source cmd.Source, output *cmd.Output) {
+	var selector, ok = c.Target.LoadOr([]cmd.Target{source})[0].(*player.Player)
+	if !ok {
+		output.Error("Selector must be player-type")
+		return
 	}
-	if cmd.Gamemode == "d" || cmd.Gamemode == "default" {
-		target.SetGameMode(target.World().DefaultGameMode())
-		target.Messagef("Your game mode has been updated to %v")
+	if c.Gamemode == "d" || c.Gamemode == "default" {
+		selector.SetGameMode(selector.World().DefaultGameMode())
+		if selector.Name() != source.Name() {
+			output.Printf("Set %v's game mode to Default", selector.Name())
+			selector.Messagef("Your game mode has been updated to Default")
+			return
+		}
+		output.Printf("Your game mode has been updated to Default")
+		output.Printf("Set own game mode to Default")
 	} else {
-		var gamemode, name = stringToGamemode(string(cmd.Gamemode))
-		target.SetGameMode(gamemode)
-		target.Messagef("Your game mode has been updated to %v", name)
+		var gamemode, name = stringToGamemode(string(c.Gamemode))
+		selector.SetGameMode(gamemode)
+		if selector.Name() != source.Name() {
+			output.Printf("Set %v's game mode to %v", selector.Name(), name)
+			selector.Messagef("Your game mode has been updated to %v", name)
+			return
+		}
+		output.Printf("Your game mode has been updated to %v", name)
+		output.Printf("Set own game mode to %v", name)
 	}
 }
 
-func (cmd GamemodeCommandInt) Run(source cmd.Source, output *cmd.Output) {}
+func (c GamemodeCommandInt) Run(source cmd.Source, output *cmd.Output) {
+	var selector, ok = c.Target.LoadOr([]cmd.Target{source})[0].(*player.Player)
+	if !ok {
+		output.Error("Selector must be player-type")
+		return
+	}
+
+	if c.Gamemode == 5 {
+		selector.SetGameMode(selector.World().DefaultGameMode())
+		if selector.Name() != source.Name() {
+			output.Printf("Set %v's game mode to Default", selector.Name())
+			selector.Message("Your game mode has been updated to Default")
+			return
+		}
+		output.Print("Your game mode has been updated to Default")
+		output.Print("Set own game mode to Default")
+	} else if gamemode, name := intToGamemode(c.Gamemode); gamemode != nil {
+		selector.SetGameMode(gamemode)
+		if selector.Name() != source.Name() {
+			output.Printf("Set %v's game mode to %v", selector.Name(), name)
+			selector.Messagef("Your game mode has been update to %v", name)
+			return
+		}
+		output.Printf("Your game mode has been update to %v", name)
+		output.Printf("Set own game mode to %v", name)
+	} else {
+		output.Errorf("Game mode '%v' is invalid", c.Gamemode)
+	}
+}
 
 type gamemodeSpec string
 
@@ -57,7 +91,6 @@ func (gamemodeSpec) Options(source cmd.Source) []string {
 }
 
 func stringToGamemode(input string) (world.GameMode, string) {
-	///var gamemode world.GameMode
 	switch input {
 	case "a", "adventure":
 		return world.GameModeAdventure, "Adventure"
@@ -70,5 +103,19 @@ func stringToGamemode(input string) (world.GameMode, string) {
 	default:
 		return world.GameModeCreative, "Creative"
 	}
-	//return gamemode
+}
+
+func intToGamemode(input int) (world.GameMode, string) {
+	switch input {
+	case 0:
+		return world.GameModeSurvival, "Survival"
+	case 1:
+		return world.GameModeCreative, "Creative"
+	case 2:
+		return world.GameModeAdventure, "Adventure"
+	case 6:
+		return world.GameModeSpectator, "Spectator"
+	default:
+		return nil, ""
+	}
 }
