@@ -3,7 +3,7 @@ module github.com/RoyalMCPE/df-vanillacmds
 go 1.18
 
 require (
-	github.com/df-mc/dragonfly v0.7.4
+	github.com/df-mc/dragonfly v0.7.5-0.20220715035409-dfe4b6691a4c
 	github.com/pelletier/go-toml v1.9.5
 	github.com/sirupsen/logrus v1.8.1
 )
