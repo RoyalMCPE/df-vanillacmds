@@ -5,13 +5,13 @@ import (
 )
 
 type TimeSetInt struct {
-	Sub set_name
+	Sub cmd.SubCommand `cmd:"set"`
 
 	Time int `cmd:"amount"`
 }
 
 type TimeSetString struct {
-	Sub set_name
+	Sub cmd.SubCommand `cmd:"set"`
 
 	Time time_spec `cmd:"time"`
 }
@@ -31,12 +31,6 @@ func timeFromString(time string) int {
 	return map[string]int{
 		"day": 1000, "night": 13000, "noon": 6000, "midnight": 18000, "sunrise": 23000, "sunset": 12000,
 	}[time]
-}
-
-type set_name string
-
-func (set_name) SubName() string {
-	return "set"
 }
 
 type time_spec string
